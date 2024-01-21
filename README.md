@@ -6,7 +6,7 @@ This project's main purpose is to provide an easy-to-use Python class that runs 
 `.generateTile(self)`
 Generates a tile in a random position on the board. Chooses "2" 90% of the time and "4" 10% of the time.
 
-`.dRender(self)`
+`.__str__(self)`
 Renders the board in a console-friendly manner.
 
 `.move(self, direction)`
