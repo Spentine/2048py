@@ -54,7 +54,7 @@ class G2048:
       return None # how did we get here
     self.board[random.choice(empty)] = int(random.choice("1111111112")) # set a random index to a random tile
 
-  def dRender(self):
+  def __str__(self):
     values = ["    ", "   2", "   4", "   8", "  16", "  32", "  64", " 128", " 256", " 512", "1024", "2048", "4096",
               "8192", "163_", "327_", "655_", "131_", "262_"]
     return f"{values[self.board[0]]}|{values[self.board[1]]}|{values[self.board[2]]}|{values[self.board[3]]}\n{values[self.board[4]]}|{values[self.board[5]]}|{values[self.board[6]]}|{values[self.board[7]]}\n{values[self.board[8]]}|{values[self.board[9]]}|{values[self.board[10]]}|{values[self.board[11]]}\n{values[self.board[12]]}|{values[self.board[13]]}|{values[self.board[14]]}|{values[self.board[15]]}"
@@ -106,15 +106,16 @@ class G2048:
     return False
 
 
-b = G2048()
+game = G2048() # Initialize game
 
-while b.canMove():
-  print(b.dRender() + f" Score: {b.score}")
-  print(b.toString())
-  x = True
-  # i = 0
-  while x:
-    x = not b.move(input(">> "))
-    # x = not b.move(["down", "left", "right", "up"][i])
-    # i += 1
-  b.generateTile()
+while game.canMove(): # While the user can move and interact with the board
+  print(game) # Display board
+  print(f"Score: {game.score}") # Display score
+  awaitingInput = True
+  while awaitingInput: # While a move hasn't been made
+    awaitingInput = not game.move(input(">> ")) # If the user moved, set awaitingInput to False and end the cycle.
+  game.generateTile() # generate a new tile
+
+# Game over
+print(game)
+print(f"Final Score: {game.score}")
