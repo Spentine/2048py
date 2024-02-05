@@ -57,7 +57,10 @@ class G2048:
   def __str__(self):
     values = ["    ", "   2", "   4", "   8", "  16", "  32", "  64", " 128", " 256", " 512", "1024", "2048", "4096",
               "8192", "163_", "327_", "655_", "131_", "262_"]
-    return f"{values[self.board[0]]}|{values[self.board[1]]}|{values[self.board[2]]}|{values[self.board[3]]}\n{values[self.board[4]]}|{values[self.board[5]]}|{values[self.board[6]]}|{values[self.board[7]]}\n{values[self.board[8]]}|{values[self.board[9]]}|{values[self.board[10]]}|{values[self.board[11]]}\n{values[self.board[12]]}|{values[self.board[13]]}|{values[self.board[14]]}|{values[self.board[15]]}"
+    return f"{values[self.board[0]]}|{values[self.board[1]]}|{values[self.board[2]]}|{values[self.board[3]]}\n" \
+           f"{values[self.board[4]]}|{values[self.board[5]]}|{values[self.board[6]]}|{values[self.board[7]]}\n" \
+           f"{values[self.board[8]]}|{values[self.board[9]]}|{values[self.board[10]]}|{values[self.board[11]]}\n" \
+           f"{values[self.board[12]]}|{values[self.board[13]]}|{values[self.board[14]]}|{values[self.board[15]]}"
 
   def move(self, direction):
     if not direction in ["up", "right", "down", "left"]:
