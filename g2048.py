@@ -140,7 +140,7 @@ class G2048:
     while len(self.replay) % 4 != 0:
       self.replay.append(0)
     
-    for i in range(len(self.replay) >> 2):
+    for i in range(len(self.replay) >> 2): # 4 movement commands in a byte
       replay += ((self.replay[4 * i]) |
                  (self.replay[4 * i + 1] << 2) |
                  (self.replay[4 * i + 2] << 4) |
@@ -152,7 +152,7 @@ class G2048:
     return base64.standard_b64encode(replay).decode("utf-8")
   
   # read replay
-  def readReplay(self, replay):
+  def readReplay(self, replay, simulate=True):
     data = base64.standard_b64decode(replay.encode("utf-8"))
     
     version = int.from_bytes(data[0:2], 'big')
@@ -163,16 +163,18 @@ class G2048:
     replayLength = int.from_bytes(data[10:14], 'big')
     self.replay = []
     
-    byteIndex = 14
-    while (byteIndex < len(replay)):
-      byte = int.from_bytes(data[byteIndex:byteIndex+1], 'big')
-      for i in range(4):
-        self.replay.append(byte & 0b11)
-        byte = byte >> 2
+    byteIndex = 14 # the start of the movement bytes
+    while (byteIndex < len(data)):
+      byte = data[byteIndex]
+      for i in range(4): # each byte comes with 4 movement commands
+        self.replay.append(byte & 0b11) # get last two bits
+        byte = byte >> 2 # move it to the right by 2
       byteIndex += 1
     
-    while len(self.replay) != replayLength:
+    while len(self.replay) != replayLength: # make it the correct length
       self.replay.pop()
+    
+    if not simulate: return
     
     self.generateTile()
     for movement in self.replay:
@@ -185,3 +187,40 @@ class G2048:
     if not move in m: return False # if direction invalid
     self.replay.append(m[move]) # add it to the replay
     return True
+  
+  def exportGameState(self):
+    gameState = ((1).to_bytes(2, 'big') + # version
+             self.score.to_bytes(4, 'big') + # score
+             self.height.to_bytes(2, 'big') + # height
+             self.width.to_bytes(2, 'big') + # width
+             self.rng.seed.to_bytes(4, 'big')) # seed
+    
+    for i in self.board:
+      for j in i:
+        gameState += j.to_bytes(1, 'big') # adds every board item
+    
+    return base64.standard_b64encode(gameState).decode("utf-8")
+  
+  def importGameState(self, gameState):
+    data = base64.standard_b64decode(gameState.encode("utf-8"))
+    
+    version = int.from_bytes(data[0:2], 'big')
+    self.score = int.from_bytes(data[2:6], 'big')
+    self.height = int.from_bytes(data[6:8], 'big')
+    self.width = int.from_bytes(data[8:10], 'big')
+    self.rng = LehmerRNG.RNG(int.from_bytes(data[10:14], 'big'))
+    
+    board = []
+    byteIndex = 14
+    while (byteIndex < len(data)):
+      board.append(data[byteIndex])
+      byteIndex += 1
+    
+    index = 0
+    self.board = []
+    for i in range(self.height):
+      row = []
+      for j in range(self.width):
+        row.append(board[index])
+        index += 1
+      self.board.append(row)
