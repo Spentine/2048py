@@ -27,6 +27,7 @@ class G2048:
     
     # make width x height board full of 0
     self.board = [[0 for j in range(width)] for i in range(height)]
+    self.score = 0
     
     self.playing = True
     
@@ -36,7 +37,7 @@ class G2048:
   
   def __str__(self):
     # return str(self.board)
-    sBoard = "" # string board
+    sBoard = f"Score: {self.score}\n" # string board
     for i in self.board:
       for j in i:
         sBoard += "|" + str(j).zfill(2)
@@ -55,6 +56,7 @@ class G2048:
         self.board[iRow][iColumn] = 0
         return True
       if self.board[iRow][iColumn] != self.board[tRow][tColumn]: return False # if they are different tiles
+      self.score += 2 << self.board[iRow][iColumn] # increment score
       self.board[tRow][tColumn] = - (1 + self.board[iRow][iColumn]) # increment and make it negative
       self.board[iRow][iColumn] = 0
       return True
